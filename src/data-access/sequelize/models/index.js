@@ -1,3 +1,4 @@
+// models/index.js
 'use strict';
 
 const fs = require('fs');
@@ -22,7 +23,7 @@ fs
   })
   .forEach(file => {
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+    db[model.name] = model;  // Ensure each model is accessible by its name
   });
 
 Object.keys(db).forEach(modelName => {

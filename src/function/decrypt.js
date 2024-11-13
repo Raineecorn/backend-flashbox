@@ -1,17 +1,19 @@
-const decrypts = ({jwt,dotenv}) => {
-    return  async function(req,res,next){
-        try {
-            dotenv.config
-            jwt.verify(req.token,process.env.ACCESS_TOKEN_KEY,(error,callbackData)=>{
-                if(error) {res.status(403).json({message:"connection failed, invalid token for Authorization"})}else{
-                    next()
-                }
-            })
-            } catch (error) {
-            console.log("Error: ", error.message)
-            throw new Error("Error on authentication")
-        }
-    }
-}
+const decrypts = ({ jwt, dotenv }) => {
+    return async function (token) { // Expect only token as input
+        dotenv.config();
 
-module.exports = decrypts
+        
+        // Wrap jwt.verify in a Promise to allow async/await usage
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+                if (error) {
+                    console.error("JWT verification error:", error.message);
+                    return reject(new Error("Invalid token for Authorization"));
+                }
+                resolve(decoded);
+            });
+        });
+    };
+};
+
+module.exports = decrypts;

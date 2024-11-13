@@ -1,26 +1,27 @@
-const middleware = ({jwt,dotenv,encrypt}) => {
+const authMiddleware = ({ decrypt }) => {
+  return async function (req, res, next) {
+      const BearerHeader = req.headers['authorization'];
 
-    return async function auths(req,res,next){
-        try {
-            dotenv.config()
-            const BearHeader = req.headers['authorization']
-            if (typeof BearHeader !== 'undefined')
-            {
-                const bearer = BearHeader.split(' ')
-                const bearerTokens = bearer[1]
-                req.token =  bearerTokens   
-                next()
-            }
-            else
-            {
-                return res.status(403).send(`This site is FORBIDEN`)
-            }
-        } catch (error) {   
-            return res.status(401).send(`Your authentication is invalid/ or auth is failed to connect`)
-        }
-    }
+      // Check if the Authorization header is present
+      if (!BearerHeader) {
+          return res.status(403).json({ message: 'Access Forbidden: No token provided' });
+      }
 
+      // Extract the token from the Authorization header
+      const token = BearerHeader.split(' ')[1];
+      if (!token) {
+          return res.status(403).json({ message: 'Access Forbidden: Invalid token format' });
+      }
 
-}
+      try {
+          // Use decrypt function to verify and decode token
+          const decoded = await decrypt(token); // Pass only the token and await the result
+          req.userId = decoded.id; // Assuming `id` is in the token payload
+          next();
+      } catch (error) {
+          return res.status(401).json({ message: 'Unauthorized: ' + error.message });
+      }
+  };
+};
 
-module.exports = middleware
+module.exports = authMiddleware;

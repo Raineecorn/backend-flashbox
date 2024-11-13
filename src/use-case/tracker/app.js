@@ -1,14 +1,16 @@
-const { encrypt, decrypt, tokens } = require('../../function/app')
-const userQuery = require('../../data-access/connection/user/app')
-const trackingQuery = require('../../data-access/connection/tracker/app')
-const { makeTracker } = require('../../entities/tracker/makeTracker')
+const query = require('../../data-access/connection/tracking/app')
+const trackingQuery = require('../../data-access/connection/tracking/app')
+const {  makeTrackings, makeAudits  } = require('../../entities/tracker/app');
 
-const assign = require('../tracker/assignTracker')
+const audit = require('../tracker/useCaseAudit')
+const tracking = require('../tracker/useCaseTracking')
 
-const assignTracker = assign({ userQuery,trackingQuery,makeTracker })
+const addAudit = audit({makeAudits,query})
+const addTracking = tracking({makeTrackings,query})
+
 const services = Object.freeze({
-    assignTracker
+    addAudit,addTracking
 })
 
 module.exports = services
-module.exports = { assignTracker }
+module.exports = { addAudit,addTracking }

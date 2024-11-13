@@ -1,11 +1,5 @@
 // src/data-access/connection/tracker/query.js
 const Query = ({ connections, Model, Op, buildCondition }) => {
-  return Object.freeze({
-    fetchData,
-    createData,
-    findData
-  });
-
   // Insert Data
   async function createData({ data }) {
     try {
@@ -39,16 +33,50 @@ const Query = ({ connections, Model, Op, buildCondition }) => {
     }
   }
 
-  // Find Data by Primary Key (e.g., `id` for tracking, `audit_id` for audit)
+  // Update Data by condition
+  async function updateData(id, data) {
+    try {
+      const [updated] = await Model.update(data, { where: { trackingNumber: id } });
+      if (updated) {
+        return await findData(id); // Return updated data
+      }
+      throw new Error("Data not found for update!");
+    } catch (error) {
+      console.error("Error on updating Data: ", error.message);
+      throw new Error("Error on updating data!");
+    }
+  }
+
+  // Fetch all Data (without condition)
+  async function fetchAllData() {
+    try {
+      const result = await Model.findAll();
+      return result;
+    } catch (error) {
+      console.error("Error on fetching all Data: ", error.message);
+      throw new Error("Error on fetching all data!");
+    }
+  }
+
+  // Find Data by Primary Key
   async function findData(id) {
     try {
-      const result = await Model.findByPk(id);
+      const result = await Model.findOne({ where: { trackingNumber: id } });
       return result;
     } catch (error) {
       console.error("Error on fetching Data by ID: ", error.message);
       throw new Error("Error on fetching data by ID!");
     }
   }
+
+  // Return all functions as part of the Query object
+  return Object.freeze({
+    fetchData,
+    createData,
+    updateData,
+    fetchAllData,
+    findData,
+  });
 };
 
 module.exports = Query;

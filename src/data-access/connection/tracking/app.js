@@ -1,10 +1,15 @@
+// src/data-access/connection/tracker/app.js
 const { connections } = require("../../index");
-const { TrackingIdentity } = require("../../sequelize/models/index")
-const { buildCondition } = require('../../../function/app');
-
+const { FBT_Tracking, FBT_Audit, FBT_entry } = require("../../sequelize/models/");
+const { Op } = require("sequelize");
+const { buildCondition } = require("../../../function/app");
 const Query = require("./query");
 
+// Initialize tracking and audit queries
+const trackingQuery = Query({ connections, Model: FBT_Tracking, Op, buildCondition });
+const auditQuery = Query({ connections, Model: FBT_Audit, Op, buildCondition });
 
-const query = Query({ connections, TrackingIdentity, Op, buildCondition });
-
-module.exports = query
+module.exports = {
+  trackingQuery,
+  auditQuery
+};

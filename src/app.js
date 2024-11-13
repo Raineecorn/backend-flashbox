@@ -16,8 +16,9 @@ const PORT = process.env.PORT || 5000
 
 
 //global routes
-//routes for Manipulation of User
-app.use('/flashbox/api/user',require('./routes/user/app'))
+app.use('/flashbox/api/tracker',require('./routes/tracker/app'))
+app.use('/flashbox/api/entry',require('./routes/entry/app'))
+app.use('/flashbox/api/account',require('./routes/identification/app'))
 
 
 //return if invalid routes

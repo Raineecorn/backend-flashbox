@@ -1,13 +1,17 @@
-const { assignTracker } = require('../../use-case/tracker/app')
-const { encrypt, decrypt, tokens, hash } = require('../../function/app')
+const { useCaseTracking, useCaseAudit } = require('../../use-case/tracker/app')
+const { encrypt, decrypt, tokens, hash, validationSchemas } = require('../../function/app')
 
-const assign = require('../tracker/assignTracker')
+const addTrack = require('../tracker/addTracking')
+const auditAdd = require('../tracker/addAudit')
 
-const assignTrackers = assign({ assignTracker })
+const addTracking = addTrack({ useCaseTracking, validationSchemas })
+const addAudit = auditAdd({ useCaseAudit, validationSchemas  })
 
 const services = Object.freeze({
-    assignTrackers
+    addTracking, addAudit
 })
 
 module.exports = services
-module.exports = { assignTrackers } 
+module.exports = {
+    addTracking, addAudit
+} 
